@@ -1,0 +1,43 @@
+.text{
+    font-family: 'Roboto', sans-serif;
+}
+.page-type {
+    font-family: 'Roboto', sans-serif;
+    position: absolute;
+    top: 10px; 
+    right: 10px; 
+    color: black; 
+    font-weight: 500;
+    font-size: 20px; 
+}
+.page-title {
+    text-align: center;
+    font-family: 'Roboto', sans-serif; 
+    font-weight: 500; 
+    font-size: 36px; 
+    color: black; 
+    margin-top: 40px; 
+}
+.search-section {
+    text-align: center;
+    margin-top: 20px; 
+}
+.search-input {
+    border-radius: 20px;
+    padding: 10px 10px 10px 35px; /* Adjust padding to accommodate the icon */
+    border: 1px solid black;
+    width: 300px; 
+    position: relative; /* Position the icon relative to the input */
+    background-image: url('assets/search.png'); /* Set the icon as background */
+    background-size: 20px 20px; /* Set the size of the icon */
+    background-repeat: no-repeat; /* Ensure the icon doesn't repeat */
+    background-position: 10px center; /* Position the icon within the input */
+}
+.search-button {
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 10px 30px;
+    background-color: white; 
+    color: black; 
+    cursor: pointer;
+}
