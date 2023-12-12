@@ -92,7 +92,7 @@
                 echo "-----------------------------";
                 echo "<p><strong>Number of Citations:</strong> " . $data['number_citations'] . "</p>";
                 echo "</div>";
-                if ($index !== count($sampleData) - 1) {
+                if ($index !== count($currentData) - 1) {
                     echo "<div class='separator'></div>";
                 }
                 echo "</div>";
