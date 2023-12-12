@@ -10,6 +10,14 @@
     font-weight: 500;
     font-size: 20px; 
 }
+.page-type a {
+    color: black;
+    text-decoration: none; 
+}
+
+.page-type a:hover {
+    color: gray; 
+}
 .page-title {
     text-align: center;
     font-family: 'Roboto', sans-serif; 
