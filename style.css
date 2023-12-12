@@ -24,20 +24,28 @@
 }
 .search-input {
     border-radius: 20px;
-    padding: 10px 10px 10px 35px; /* Adjust padding to accommodate the icon */
+    padding: 10px 10px 10px 35px;
     border: 1px solid black;
     width: 300px; 
-    position: relative; /* Position the icon relative to the input */
-    background-image: url('assets/search.png'); /* Set the icon as background */
-    background-size: 20px 20px; /* Set the size of the icon */
-    background-repeat: no-repeat; /* Ensure the icon doesn't repeat */
-    background-position: 10px center; /* Position the icon within the input */
+    position: relative; 
+    background-image: url('assets/search.svg');
+    background-size: 20px 20px; 
+    background-repeat: no-repeat; 
+    background-position: 10px center; 
 }
 .search-button {
     border: 1px solid black;
     border-radius: 3px;
-    padding: 10px 30px;
+    padding: 5px 20px;
     background-color: white; 
     color: black; 
     cursor: pointer;
+}
+.separator {
+    height: 2px;
+    background-color: black;
+    margin-bottom: 10px;
+}
+.result:last-child .separator {
+    display: none; 
 }
