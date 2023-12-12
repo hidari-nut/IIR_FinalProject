@@ -14,9 +14,8 @@
     color: black;
     text-decoration: none; 
 }
-
 .page-type a:hover {
-    color: gray; 
+    color: dodgerblue; 
 }
 .page-title {
     text-align: center;
@@ -49,6 +48,10 @@
     color: black; 
     cursor: pointer;
 }
+.search-button:hover {
+    color: white;
+    background-color: dodgerblue;
+}
 .crawl-section {
     text-align: center;
     margin-top: 20px; 
@@ -71,6 +74,10 @@
     background-color: white; 
     color: black; 
     cursor: pointer;
+}
+.crawl-button:hover {
+    color: white;
+    background-color: dodgerblue;
 }
 .separator {
     height: 2px;
@@ -99,7 +106,7 @@
     font-family: 'Roboto', sans-serif;
     position: absolute;
     top: 178px; 
-    right: 10px;
+    right: 15px;
     color: black;
 }
 .related-search h3 {
@@ -107,38 +114,41 @@
     font-weight: 500;
     margin-bottom: 10px;
 }
-
 .related-search ul {
     list-style: none;
-    padding: 0;
+    padding: 0; 
 }
-
 .related-search ul li {
     margin-bottom: 5px;
 }
-
+.related-search ul li a{
+    color: dodgerblue;
+    text-decoration: none;
+}
 .pagination {
+    font-family: Roboto, sans-serif; 
     display: flex;
     justify-content: center;
     margin-top: 20px;
-  }
-
-  .pagination a {
+}
+.pagination a {
     display: inline-block;
     padding: 10px 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
     margin: 0 5px;
     text-decoration: none;
-    color: #333;
-  }
-
-  .pagination a.active {
-    background-color: #007bff;
+    color: black;
+}
+.pagination a.active {
+    background-color: dodgerblue;
     color: white;
-  }
-
-  .pagination button {
+}
+.pagination a:not(.active):hover {
+    color: white;
+    background-color: dodgerblue;
+}
+.pagination button {
     display: inline-block;
     padding: 10px 15px;
     border: 1px solid #ccc;
@@ -146,5 +156,5 @@
     margin: 0 5px;
     background-color: white;
     cursor: pointer;
-    color: #333;
-  }
+    color: white;
+}
