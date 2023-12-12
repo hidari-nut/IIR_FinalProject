@@ -43,10 +43,10 @@
     <form method="POST" action="">
         <div class="page-type">Home|Crawling</div>
         <div class="page-title">Data Crawling from Google Scholar</div>
-        <div class="search-section">
+        <div class="crawl-section">
             <span class="text">Keyword:</span>
-            <input type="text" class="search-input" name="keyword" placeholder="Search here">
-            <button type="submit" name="crawl_button" class="search-button">Crawl</button>
+            <input type="text" class="crawl-input" name="keyword" placeholder="Input text here">
+            <button type="submit" name="crawl_button" class="crawl-button">Crawl</button>
         </div>
         <script src="" async defer></script>
         <?php

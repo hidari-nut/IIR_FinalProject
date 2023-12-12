@@ -41,11 +41,102 @@
     color: black; 
     cursor: pointer;
 }
+.crawl-section {
+    text-align: center;
+    margin-top: 20px; 
+}
+.crawl-input {
+    border-radius: 20px;
+    padding: 10px 10px 10px 35px;
+    border: 1px solid black;
+    width: 300px; 
+    position: relative; 
+    background-image: url('assets/search.svg');
+    background-size: 20px 20px; 
+    background-repeat: no-repeat; 
+    background-position: 10px center; 
+}
+.crawl-button {
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 5px 20px;
+    background-color: white; 
+    color: black; 
+    cursor: pointer;
+}
 .separator {
     height: 2px;
     background-color: black;
     margin-bottom: 10px;
 }
+.result {
+    font-family: 'Roboto', sans-serif;
+  }
+.result-content {
+    margin-left: 20px; 
+}
 .result:last-child .separator {
     display: none; 
 }
+.radio-buttons{
+    font-family: Roboto, sans-serif; 
+    margin-top: 10px;'
+}
+.text-sub{
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px; 
+    font-weight: 500;
+}
+.related-search {
+    font-family: 'Roboto', sans-serif;
+    position: absolute;
+    top: 178px; 
+    right: 10px;
+    color: black;
+}
+.related-search h3 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.related-search ul {
+    list-style: none;
+    padding: 0;
+}
+
+.related-search ul li {
+    margin-bottom: 5px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .pagination a {
+    display: inline-block;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .pagination a.active {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .pagination button {
+    display: inline-block;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 0 5px;
+    background-color: white;
+    cursor: pointer;
+    color: #333;
+  }
