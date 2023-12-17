@@ -1,0 +1,7 @@
+{
+    "require": {
+        "markfullmer/porter2": "^1.0",
+        "php-ai/php-ml": "^0.9.0",
+        "sastrawi/sastrawi": "1"
+    }
+}

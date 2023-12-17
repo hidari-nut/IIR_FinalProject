@@ -1,0 +1,178 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "205c5110670bb7cc0c07cd62c34f583d",
+    "packages": [
+        {
+            "name": "markfullmer/porter2",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/markfullmer/porter2.git",
+                "reference": "99b356c203cd52af62c57a8f9f1f7a9784e75352"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/markfullmer/porter2/zipball/99b356c203cd52af62c57a8f9f1f7a9784e75352",
+                "reference": "99b356c203cd52af62c57a8f9f1f7a9784e75352",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "markfullmer\\porter2\\": [
+                        "src/",
+                        "test/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "markfullmer",
+                    "email": "mfullmer@gmail.com"
+                }
+            ],
+            "description": "Stem words using the English Porter 2 algorithm",
+            "support": {
+                "issues": "https://github.com/markfullmer/porter2/issues",
+                "source": "https://github.com/markfullmer/porter2/tree/master"
+            },
+            "time": "2017-05-12T22:10:48+00:00"
+        },
+        {
+            "name": "php-ai/php-ml",
+            "version": "0.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.com/php-ai/php-ml.git",
+                "reference": "fd8b70629e16ed67307fe150ba25738449b9a6b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/php-ai%2Fphp-ml/repository/archive.zip?sha=fd8b70629e16ed67307fe150ba25738449b9a6b2",
+                "reference": "fd8b70629e16ed67307fe150ba25738449b9a6b2",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "phpbench/phpbench": "^0.16.0",
+                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan-phpunit": "^0.12",
+                "phpstan/phpstan-strict-rules": "^0.12",
+                "phpunit/phpunit": "^8.0",
+                "symplify/easy-coding-standard": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phpml\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arkadiusz Kondas",
+                    "email": "arkadiusz.kondas@gmail.com"
+                }
+            ],
+            "description": "PHP-ML - Machine Learning library for PHP",
+            "homepage": "https://github.com/php-ai/php-ml",
+            "keywords": [
+                "Neural network",
+                "artificial intelligence",
+                "computational learning theory",
+                "data science",
+                "feature extraction",
+                "machine learning",
+                "pattern recognition"
+            ],
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/19024967/issues"
+            },
+            "time": "2020-05-27T09:52:59+00:00"
+        },
+        {
+            "name": "sastrawi/sastrawi",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sastrawi/sastrawi.git",
+                "reference": "fd3cd29e46954b2c8f24dc95f029ce233871d2ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sastrawi/sastrawi/zipball/fd3cd29e46954b2c8f24dc95f029ce233871d2ef",
+                "reference": "fd3cd29e46954b2c8f24dc95f029ce233871d2ef",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "1.4.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Sastrawi\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andy Librian",
+                    "email": "andylibrian@gmail.com",
+                    "homepage": "http://andylibrian.pro",
+                    "role": "Lead Developer"
+                }
+            ],
+            "description": "PHP library for stemming Indonesian language (Bahasa Indonesia)",
+            "homepage": "https://github.com/sastrawi/sastrawi",
+            "keywords": [
+                "bahasa",
+                "indonesia",
+                "indonesian",
+                "kata dasar",
+                "root word",
+                "stem"
+            ],
+            "support": {
+                "issues": "https://github.com/sastrawi/sastrawi/issues",
+                "source": "https://github.com/sastrawi/sastrawi"
+            },
+            "time": "2014-07-20T05:15:07+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}
