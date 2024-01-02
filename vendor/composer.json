@@ -1,0 +1,5 @@
+{
+    "require": {
+        "pear/text_languagedetect": "^1.0"
+    }
+}

@@ -13,6 +13,47 @@
 
 <body>
     <?php
+    function  Cosine(array $doc, array $query): float
+    {
+        $numerator = 0.0;
+        $denom_wkq = 0.0;
+        $denom_wkj = 0.0;
+
+        if (count($doc) !== count($query)) {
+            throw new InvalidArgumentException('Jumlah Array Tidak Sama !');
+        } else {
+            for ($x = 0; $x < count($doc); $x++) {
+                $numerator += $query[$x] * $doc[$x];
+                $denom_wkq += pow($query[$x], 2);
+                $denom_wkj += pow($query[$x], 2);
+            }
+
+            $denom = sqrt($denom_wkq * $denom_wkj);
+            if ($denom != 0) {
+                $result = $numerator / $denom;
+            } else {
+                $result = 0;
+            }
+        }
+        return $result;
+    }
+
+
+    require_once __DIR__ . '/vendor/autoload.php';  
+
+    use Phpml\FeatureExtraction\TokenCountVectorizer;
+    use Phpml\Tokenization\WhitespaceTokenizer;
+    use Phpml\FeatureExtraction\TfIdfTransformer;
+
+
+    use Phpml\Math\Distance\Minkowski;
+
+    // Remember to put porter class in here 
+    
+    $ld = new Text_LanguageDetect();
+
+
+
     $sampleData = [
         [
             'id' => 1,
@@ -41,7 +82,6 @@
     ];
 
 
-    
     $sampleLink = [
         [
             'id' => "Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro vel, aut quidem sed necessitatibus voluptas veritatis quisquam hic nesciunt maiores nulla sapiente distinctio perspiciatis. Mollitia veniam officiis nam ipsum culpa.",
@@ -75,6 +115,41 @@
         <script src="" async defer></script>
         <?php
         if (isset($_POST['search_button'])) {
+            $search  = $_POST['search_button'];
+
+            $arrDoc = array();
+            $arrIds = array();
+
+            // $query = "SELECT id,concat(title,' ',abstract) as content FROM article;";
+            // $res = $con->query($query);
+            // while ($row = $res->fetch_assoc()) {
+                
+            //     $arrDoc[] = $row['content'];
+            //     $arrIds[] = $row['id'];
+            // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             $resultsPerPage = 2;
             $totalDataCount = count($sampleData);
             $totalPages = ceil($totalDataCount / $resultsPerPage);
