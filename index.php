@@ -13,6 +13,23 @@
 
 <body>
     <?php
+
+    $con = new mysqli("localhost", "root", "mysql", "iirFinal");
+    if ($con->connect_errno) {
+        echo "Failed to connect to MySQL:" . $con->connect_error . "<br>";
+    } else {
+        // echo "Connection Success. <br>";
+    }
+
+    function sanitize($sentence)
+    {
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $sentence);
+        $sanitized = preg_replace('/\s+/', ' ', $sanitized);
+        $sanitized = trim($sanitized);
+        return $sanitized;
+    }
+
+
     function  Cosine(array $doc, array $query): float
     {
         $numerator = 0.0;
@@ -39,18 +56,29 @@
     }
 
 
-    require_once __DIR__ . '/vendor/autoload.php';  
+    require_once __DIR__ . '/vendor/autoload.php';
+    require_once __DIR__ . '/vendor2/autoload.php';
+    require_once 'Text/LanguageDetect.php';
 
+    use markfullmer\porter2\Porter2;
     use Phpml\FeatureExtraction\TokenCountVectorizer;
     use Phpml\Tokenization\WhitespaceTokenizer;
     use Phpml\FeatureExtraction\TfIdfTransformer;
 
 
     use Phpml\Math\Distance\Minkowski;
+    use StopWords\StopWords;
+
+    $stopwords = new StopWords('en');
 
     // Remember to put porter class in here 
-    
     $ld = new Text_LanguageDetect();
+
+    $stemmerFactory = new \Sastrawi\Stemmer\StemmerFactory();
+    $stemmer = $stemmerFactory->createStemmer();
+
+    $stopwordFactory = new \Sastrawi\StopWordRemover\StopWordRemoverFactory();
+    $stopword = $stopwordFactory->createStopWordRemover();
 
 
 
@@ -120,13 +148,24 @@
             $arrDoc = array();
             $arrIds = array();
 
-            // $query = "SELECT id,concat(title,' ',abstract) as content FROM article;";
-            // $res = $con->query($query);
-            // while ($row = $res->fetch_assoc()) {
-                
-            //     $arrDoc[] = $row['content'];
-            //     $arrIds[] = $row['id'];
-            // }
+            $query = "SELECT id,concat(title,' ',abstract) as content FROM article;";
+            $res = $con->query($query);
+            while ($row = $res->fetch_assoc()) {
+                $contentStem = '';
+                $contentStop = '';
+                $language = $ld->detectSimple($row['content']);
+                if ($language == "english") {
+                    $contentStem = Porter2::stem($row['content']);
+                    $contentStop  = $stopwords->clean($contentStem);
+                } else if ($language == "indonesian") {
+                    $contentStem = $stemmer->stem($row['content']);
+                    $contentStop = $stopword->remove($row['content']);
+                }
+                $arrDoc[] = $contentStop;
+                $arrIds[] = $row['id'];
+            }
+
+            
 
 
 

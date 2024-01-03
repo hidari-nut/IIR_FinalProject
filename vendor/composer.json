@@ -1,5 +1,7 @@
 {
     "require": {
-        "pear/text_languagedetect": "^1.0"
+        "pear/text_languagedetect": "^1.0",
+        "voku/stop-words": "^2.0",
+        "juanantoniodelgado/stopwords": "^1.3"
     }
 }
