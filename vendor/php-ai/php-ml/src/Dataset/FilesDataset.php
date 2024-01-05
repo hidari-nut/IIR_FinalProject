@@ -19,13 +19,7 @@ class FilesDataset extends ArrayDataset
 
     private function scanRootPath(string $rootPath): void
     {
-        $dirs = glob($rootPath.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR);
-
-        if ($dirs === false) {
-            throw new DatasetException(sprintf('An error occurred during directory "%s" scan', $rootPath));
-        }
-
-        foreach ($dirs as $dir) {
+        foreach (glob($rootPath.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR) as $dir) {
             $this->scanDir($dir);
         }
     }
@@ -34,13 +28,8 @@ class FilesDataset extends ArrayDataset
     {
         $target = basename($dir);
 
-        $files = glob($dir.DIRECTORY_SEPARATOR.'*');
-        if ($files === false) {
-            return;
-        }
-
-        foreach (array_filter($files, 'is_file') as $file) {
-            $this->samples[] = file_get_contents($file);
+        foreach (array_filter(glob($dir.DIRECTORY_SEPARATOR.'*'), 'is_file') as $file) {
+            $this->samples[] = [file_get_contents($file)];
             $this->targets[] = $target;
         }
     }

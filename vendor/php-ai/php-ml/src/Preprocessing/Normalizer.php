@@ -66,7 +66,7 @@ class Normalizer implements Preprocessor
         $this->fitted = true;
     }
 
-    public function transform(array &$samples, ?array &$targets = null): void
+    public function transform(array &$samples): void
     {
         $methods = [
             self::NORM_L1 => 'normalizeL1',
@@ -106,7 +106,7 @@ class Normalizer implements Preprocessor
             $norm2 += $feature * $feature;
         }
 
-        $norm2 **= .5;
+        $norm2 = sqrt((float) $norm2);
 
         if ($norm2 == 0) {
             $sample = array_fill(0, count($sample), 1);

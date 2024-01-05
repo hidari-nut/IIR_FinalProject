@@ -154,7 +154,7 @@ class Perceptron implements Classifier, IncrementalEstimator
     protected function runTraining(array $samples, array $targets): void
     {
         // The cost function is the sum of squares
-        $callback = function ($weights, $sample, $target): array {
+        $callback = function ($weights, $sample, $target) {
             $this->weights = $weights;
 
             $prediction = $this->outputClass($sample);

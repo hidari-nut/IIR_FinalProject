@@ -17,9 +17,9 @@ final class ANOVA
      * the same population mean. The test is applied to samples from two or
      * more groups, possibly with differing sizes.
      *
-     * @param array[] $samples - each row is class samples
+     * @param array|array[] $samples - each row is class samples
      *
-     * @return float[]
+     * @return array|float[]
      */
     public static function oneWayF(array $samples): array
     {
@@ -28,7 +28,7 @@ final class ANOVA
             throw new InvalidArgumentException('The array must have at least 2 elements');
         }
 
-        $samplesPerClass = array_map(static function (array $class): int {
+        $samplesPerClass = array_map(function (array $class): int {
             return count($class);
         }, $samples);
         $allSamples = (int) array_sum($samplesPerClass);
@@ -41,14 +41,10 @@ final class ANOVA
         $dfbn = $classes - 1;
         $dfwn = $allSamples - $classes;
 
-        $msb = array_map(static function ($s) use ($dfbn) {
+        $msb = array_map(function ($s) use ($dfbn) {
             return $s / $dfbn;
         }, $ssbn);
-        $msw = array_map(static function ($s) use ($dfwn) {
-            if ($dfwn === 0) {
-                return 1;
-            }
-
+        $msw = array_map(function ($s) use ($dfwn) {
             return $s / $dfwn;
         }, $sswn);
 
@@ -76,7 +72,7 @@ final class ANOVA
 
     private static function sumOfFeaturesPerClass(array $samples): array
     {
-        return array_map(static function (array $class): array {
+        return array_map(function (array $class) {
             $sum = array_fill(0, count($class[0]), 0);
             foreach ($class as $sample) {
                 foreach ($sample as $index => $feature) {
@@ -97,7 +93,7 @@ final class ANOVA
             }
         }
 
-        return array_map(static function ($sum) {
+        return array_map(function ($sum) {
             return $sum ** 2;
         }, $squares);
     }

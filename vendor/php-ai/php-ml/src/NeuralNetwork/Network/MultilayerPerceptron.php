@@ -59,14 +59,8 @@ abstract class MultilayerPerceptron extends LayeredNetwork implements Estimator,
     /**
      * @throws InvalidArgumentException
      */
-    public function __construct(
-        int $inputLayerFeatures,
-        array $hiddenLayers,
-        array $classes,
-        int $iterations = 10000,
-        ?ActivationFunction $activationFunction = null,
-        float $learningRate = 1.
-    ) {
+    public function __construct(int $inputLayerFeatures, array $hiddenLayers, array $classes, int $iterations = 10000, ?ActivationFunction $activationFunction = null, float $learningRate = 1)
+    {
         if (count($hiddenLayers) === 0) {
             throw new InvalidArgumentException('Provide at least 1 hidden layer');
         }
@@ -127,16 +121,6 @@ abstract class MultilayerPerceptron extends LayeredNetwork implements Estimator,
         }
 
         return $result;
-    }
-
-    public function getLearningRate(): float
-    {
-        return $this->learningRate;
-    }
-
-    public function getBackpropagation(): Backpropagation
-    {
-        return $this->backpropagation;
     }
 
     /**

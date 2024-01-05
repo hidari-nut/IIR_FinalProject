@@ -148,7 +148,7 @@ class ClassificationReport
 
         $precision = $this->computePrecision($truePositive, $falsePositive);
         $recall = $this->computeRecall($truePositive, $falseNegative);
-        $f1score = $this->computeF1Score($precision, $recall);
+        $f1score = $this->computeF1Score((float) $precision, (float) $recall);
 
         $this->average = compact('precision', 'recall', 'f1score');
     }
@@ -186,7 +186,10 @@ class ClassificationReport
         }
     }
 
-    private function computePrecision(int $truePositive, int $falsePositive): float
+    /**
+     * @return float|string
+     */
+    private function computePrecision(int $truePositive, int $falsePositive)
     {
         $divider = $truePositive + $falsePositive;
         if ($divider == 0) {
@@ -196,7 +199,10 @@ class ClassificationReport
         return $truePositive / $divider;
     }
 
-    private function computeRecall(int $truePositive, int $falseNegative): float
+    /**
+     * @return float|string
+     */
+    private function computeRecall(int $truePositive, int $falseNegative)
     {
         $divider = $truePositive + $falseNegative;
         if ($divider == 0) {

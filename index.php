@@ -29,6 +29,27 @@
         return $sanitized;
     }
 
+    function Minkowski(array $doc, array $query,$p):float
+    {
+
+        $sum = 0;
+
+        if (count($doc) !== count($query)) {
+            throw new InvalidArgumentException('Jumlah Array Tidak Sama !');
+        } else {
+            for ($x = 0; $x < count($doc); $x++) {
+                $diff = pow(abs($query[$x]-$doc[$x]),$p);
+                $sum += $diff;
+            }
+
+            $result = pow($sum,1/$p);
+
+          
+        }
+        return $result;
+    }
+
+   
 
     function  Cosine(array $doc, array $query): float
     {
@@ -65,8 +86,8 @@
     use Phpml\Tokenization\WhitespaceTokenizer;
     use Phpml\FeatureExtraction\TfIdfTransformer;
 
-
     use Phpml\Math\Distance\Minkowski;
+
     use StopWords\StopWords;
 
     $stopwords = new StopWords('en');
@@ -81,7 +102,7 @@
     $stopword = $stopwordFactory->createStopWordRemover();
 
 
-    $minkowski = new Minkowski();
+
 
 
     $sampleData = [
@@ -145,67 +166,64 @@
         <script src="" async defer></script>
         <?php
 
-        if ((isset($_POST['search_button'])) && (isset($_POST['distance_metric']))) {
-            $distance_metric = $_POST['distance_metric'];
-            $search  = $_POST['search_button'];
-
-            $language = $ld->detectSimple($search);
-            $searchStem = '';
-            $searchStop = '';
-
-            echo $language;
-
-            if ($language == "english") {
-                $searchStem = Porter2::stem($row['content']);
-                $searchStop  = $stopwords->clean($contentStem);
-            } else if ($language == "indonesian") {
-                $searchStem = $stemmer->stem($row['content']);
-                $searchStop = $stopword->remove($row['content']);
-            }
-
-
-            $arrDoc = array();
-            $arrIds = array();
-
-           
-            
+        if ((isset($_POST['search_button'])) && (isset($_POST['distance_metric']))) {        
             try {
+
+                $distance_metric = $_POST['distance_metric'];
+                $search  = $_POST['keyword'];
+                
+                $language = $ld->detectSimple($search);
+                $searchStem = '';
+                $searchStop = '';
+    
+                if ($language == "english") {
+                    $searchStem = Porter2::stem($search);
+                    $searchStop  = $stopwords->clean($searchStem);
+                } else if ($language == "indonesian") {
+                    $searchStem = $stemmer->stem($search);
+                    $searchStop = $stopword->remove($searchStem);
+                }
+    
+                $arrDocs = array();
+                $arrIds = array();
+
                 $query = "SELECT id,concat(title,' ',abstract) as content FROM article;";
                 $res = $con->query($query);
                 while ($row = $res->fetch_assoc()) {
                     $contentStem = '';
-                    $contentStop = '';
-                    $language = $ld->detectSimple($row['content']);
+                    $contentStop = '';                    
                     if ($language == "english") {
-                        $contentStem = Porter2::stem(sanitize($row['content']));
+                        $contentStem = Porter2::stem($row['content']);
                         $contentStop  = $stopwords->clean($contentStem);
                        
                     } else if ($language == "indonesian") {
-                        $contentStem = $stemmer->stem(sanitize($row['content']));
-                        $contentStop = $stopword->remove($row['content']);
+                        $contentStem = $stemmer->stem($row['content']);
+                        $contentStop = $stopword->remove($contentStem);
                        
                     }
-                    $arrDoc[] = $contentStop;
+                    $arrDocs[] = $contentStop;
                     $arrIds[] = $row['id'];
                 }
     
-                $arrDoc[] = $searchStop;
-    
-    
+                $arrDocs[] = $searchStop;
+                
                 $tf = new TokenCountVectorizer(new WhitespaceTokenizer());
-                $tf->fit($arrDoc);
-                $tf->transform($arrDoc);
+                $tf->fit($arrDocs);
+                $tf->transform($arrDocs);
     
-                $tfidf = new TfIdfTransformer($arrDoc);
-                $tfidf->transform($arrDoc);
+                $tfidf = new TfIdfTransformer($arrDocs);
+                $tfidf->transform($arrDocs);
     
-                $total = count($arrDoc);
+                $total = count($arrDocs);
 
                 if ($distance_metric == 'Minkowski') {
                     for ($i = 0; $i < $total - 1; $i++) {
-                        $result = $minkowski->distance($arrDoc[$total - 1], $arrDoc[$i]);
+                        // $query_terms = count($arrDocs[$total-1]);
+                        $minkowski = new Minkowski(2);
+                        $result = round($minkowski->distance($arrDocs[$i],$arrDocs[$total-1]),3);
+                        // $result = round(Minkowski($arrDocs[$i],$arrDocs[$total-1],1),2);
                         $update = "UPDATE article SET similarity = ? WHERE id = ?";
-                        echo $result;
+           
                         $stmt = $con->prepare($update);
                         $stmt->bind_param("di",$result,$arrIds[$i]);
                         $stmt->execute();
@@ -213,9 +231,9 @@
                 } else if($distance_metric == 'Cosine') {
     
                     for ($i = 0; $i < $total - 1; $i++) {
-                        $result = $minkowski->distance($arrDoc[$i], $arrDoc[$total - 1]);
+                        $result = round(Cosine($arrDocs[$i], $arrDocs[$total - 1]),3);
                         $update = "UPDATE article SET similarity = ? WHERE id = ?";
-                        echo $result;
+                     
                         $stmt = $con->prepare($update);
                         $stmt->bind_param("di",$result,$arrIds[$i]);
                         $stmt->execute();

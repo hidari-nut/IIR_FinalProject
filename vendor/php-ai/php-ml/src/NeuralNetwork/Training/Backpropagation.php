@@ -34,11 +34,6 @@ class Backpropagation
         $this->learningRate = $learningRate;
     }
 
-    public function getLearningRate(): float
-    {
-        return $this->learningRate;
-    }
-
     /**
      * @param mixed $targetClass
      */

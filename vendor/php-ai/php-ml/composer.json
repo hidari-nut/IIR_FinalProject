@@ -20,15 +20,16 @@
         }
     ],
     "require": {
-        "php": "^7.2"
+        "php": "^7.1"
     },
     "require-dev": {
-        "phpbench/phpbench": "^0.16.0",
-        "phpstan/phpstan-phpunit": "^0.12",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-strict-rules": "^0.12",
-        "phpunit/phpunit": "^8.0",
-        "symplify/easy-coding-standard": "^6.0"
+        "phpbench/phpbench": "^0.14.0",
+        "phpstan/phpstan-phpunit": "^0.10",
+        "phpstan/phpstan-shim": "^0.10",
+        "phpstan/phpstan-strict-rules": "^0.10",
+        "phpunit/phpunit": "^7.0.0",
+        "symplify/coding-standard": "^5.1",
+        "symplify/easy-coding-standard": "^5.1"
     },
     "config": {
         "preferred-install": "dist",

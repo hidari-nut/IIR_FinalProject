@@ -88,7 +88,7 @@ class Space extends SplObjectStorage
         $min = $this->newPoint(array_fill(0, $this->dimension, null));
         $max = $this->newPoint(array_fill(0, $this->dimension, null));
 
-        /** @var Point $point */
+        /** @var self $point */
         foreach ($this as $point) {
             for ($n = 0; $n < $this->dimension; ++$n) {
                 if ($min[$n] === null || $min[$n] > $point[$n]) {
@@ -116,7 +116,7 @@ class Space extends SplObjectStorage
     }
 
     /**
-     * @return Cluster[]
+     * @return array|Cluster[]
      */
     public function cluster(int $clustersNumber, int $initMethod = KMeans::INIT_RANDOM): array
     {
@@ -129,7 +129,7 @@ class Space extends SplObjectStorage
     }
 
     /**
-     * @return Cluster[]
+     * @return array|Cluster[]
      */
     protected function initializeClusters(int $clustersNumber, int $initMethod): array
     {
@@ -166,10 +166,6 @@ class Space extends SplObjectStorage
         foreach ($clusters as $cluster) {
             foreach ($cluster as $point) {
                 $closest = $point->getClosest($clusters);
-
-                if ($closest === null) {
-                    continue;
-                }
 
                 if ($closest !== $cluster) {
                     $attach[$closest] ?? $attach[$closest] = new SplObjectStorage();
