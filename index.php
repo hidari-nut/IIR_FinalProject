@@ -29,7 +29,7 @@
         return $sanitized;
     }
 
-    function Minkowski(array $doc, array $query,$p):float
+    function Minkowski(array $doc, array $query, $p): float
     {
 
         $sum = 0;
@@ -38,18 +38,16 @@
             throw new InvalidArgumentException('Jumlah Array Tidak Sama !');
         } else {
             for ($x = 0; $x < count($doc); $x++) {
-                $diff = pow(abs($query[$x]-$doc[$x]),$p);
+                $diff = pow(abs($query[$x] - $doc[$x]), $p);
                 $sum += $diff;
             }
 
-            $result = pow($sum,1/$p);
-
-          
+            $result = pow($sum, 1 / $p);
         }
         return $result;
     }
 
-   
+
 
     function  Cosine(array $doc, array $query): float
     {
@@ -166,6 +164,13 @@
         <script src="" async defer></script>
         <?php
 
+        if(isset($_POST["distance_metric"])){
+            $metric=$_POST["distance_metric"];
+        }
+        if(isset($_GET["metric"])){
+            $metric=$_GET["metric"];
+        }
+
         if ((isset($_POST['search_button'])) && (isset($_POST['distance_metric']))) {        
             try {
 
@@ -246,39 +251,34 @@
            
 
             unset($_POST);
+        }
 
 
 
+        if (isset($metric)) {
+            $order = ($metric == "Minkowski") ? "asc" : "desc";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            $sql = "SELECT id FROM article";
+            $result = $con->query($sql);
+            $totalDataCount = $result->num_rows;
 
             $resultsPerPage = 2;
-            $totalDataCount = count($sampleData);
             $totalPages = ceil($totalDataCount / $resultsPerPage);
 
             $currentpage = isset($_GET['page']) ? $_GET['page'] : 1;
 
             $startIndex = ($currentpage - 1) * $resultsPerPage;
             $endIndex = $startIndex + $resultsPerPage;
-            $currentData = array_slice($sampleData, $startIndex, $resultsPerPage);
+
+            $sql2 = "SELECT * FROM article order by similarity $order limit $startIndex, $resultsPerPage";
+            $result2 = $con->query($sql2);
+            // $stmt->bind_param("ii", $startIndex, $resultsPerPage);
+            // $result2 = $stmt->get_result(); 
+            // Error Uncaught mysqli_sql_exception: Commands out of sync; you can't run this command now
+            $currentData = [];
+            while ($row = $result2->fetch_assoc()) {
+                $currentData[] = $row;
+            }
 
             echo "<h3 class='text-sub'>The Search Results</h3>";
             foreach ($currentData as $index => $data) {
@@ -288,7 +288,7 @@
                 echo "<p><strong>Authors:</strong> <br>" . $data['authors'] . "</p>";
                 echo "<p><strong>Abstract:</strong> <br>" . $data['abstract'] . "</p>";
                 echo "-----------------------------";
-                echo "<p><strong>Number of Citations:</strong> " . $data['number_citations'] . "</p>";
+                echo "<p><strong>Number of Citations:</strong> " . $data['number_of_citations'] . "</p>";
                 echo "</div>";
                 if ($index !== count($currentData) - 1) {
                     echo "<div class='separator'></div>";
@@ -298,15 +298,15 @@
 
             echo "<div class='pagination'>";
             if ($currentpage > 1) {
-                echo "<a href='?page=" . ($currentpage - 1) . "'>Previous</a>";
+                echo "<a href='?page=" . ($currentpage - 1) . "&metric=$metric'>Previous</a>";
             }
 
             for ($i = 1; $i <= $totalPages; $i++) {
-                echo "<a href='?page=" . $i . "'" . ($currentpage == $i ? " class='active'" : "") . ">" . $i . "</a>";
+                echo "<a href='?page=" . $i . "&metric=$metric'" . ($currentpage == $i ? " class='active'" : "") . ">" . $i . "</a>";
             }
 
             if ($currentpage < $totalPages) {
-                echo "<a href='?page=" . ($currentpage + 1) . "'>Next</a>";
+                echo "<a href='?page=" . ($currentpage + 1) . "&metric=$metric'>Next</a>";
             }
             echo "</div>";
 
@@ -321,6 +321,7 @@
             echo "</ul>";
             echo "</div>";
         }
+
         ?>
     </form>
 </body>
