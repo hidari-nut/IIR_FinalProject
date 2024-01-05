@@ -81,6 +81,8 @@
     $stopword = $stopwordFactory->createStopWordRemover();
 
 
+    $minkowski = new Minkowski();
+
 
     $sampleData = [
         [
@@ -130,42 +132,103 @@
         <div class="page-title">Welcome to Scientific Journals Search Engine</div>
         <div class="search-section">
             <span class="text">Keyword:</span>
-            <input type="text" class="search-input" name="keyword" placeholder="Input text here">
+            <input type="text" class="search-input" name="keyword" placeholder="Input text here" required>
             <button type="submit" name="search_button" class="search-button">Search</button>
 
             <div class="radio-buttons">
-                <input type="radio" id="minkowski" name="distance_metric" value="Minkowski">
+                <input type="radio" id="minkowski" name="distance_metric" value="Minkowski" required>
                 <label for="minkowski">Minkowski</label>
-                <input type="radio" id="cosine" name="distance_metric" value="Cosine">
+                <input type="radio" id="cosine" name="distance_metric" value="Cosine" required>
                 <label for="cosine">Cosine</label>
             </div>
         </div>
         <script src="" async defer></script>
         <?php
-        if (isset($_POST['search_button'])) {
+
+        if ((isset($_POST['search_button'])) && (isset($_POST['distance_metric']))) {
+            $distance_metric = $_POST['distance_metric'];
             $search  = $_POST['search_button'];
+
+            $language = $ld->detectSimple($search);
+            $searchStem = '';
+            $searchStop = '';
+
+            echo $language;
+
+            if ($language == "english") {
+                $searchStem = Porter2::stem($row['content']);
+                $searchStop  = $stopwords->clean($contentStem);
+            } else if ($language == "indonesian") {
+                $searchStem = $stemmer->stem($row['content']);
+                $searchStop = $stopword->remove($row['content']);
+            }
+
 
             $arrDoc = array();
             $arrIds = array();
 
-            $query = "SELECT id,concat(title,' ',abstract) as content FROM article;";
-            $res = $con->query($query);
-            while ($row = $res->fetch_assoc()) {
-                $contentStem = '';
-                $contentStop = '';
-                $language = $ld->detectSimple($row['content']);
-                if ($language == "english") {
-                    $contentStem = Porter2::stem($row['content']);
-                    $contentStop  = $stopwords->clean($contentStem);
-                } else if ($language == "indonesian") {
-                    $contentStem = $stemmer->stem($row['content']);
-                    $contentStop = $stopword->remove($row['content']);
-                }
-                $arrDoc[] = $contentStop;
-                $arrIds[] = $row['id'];
-            }
-
+           
             
+            try {
+                $query = "SELECT id,concat(title,' ',abstract) as content FROM article;";
+                $res = $con->query($query);
+                while ($row = $res->fetch_assoc()) {
+                    $contentStem = '';
+                    $contentStop = '';
+                    $language = $ld->detectSimple($row['content']);
+                    if ($language == "english") {
+                        $contentStem = Porter2::stem(sanitize($row['content']));
+                        $contentStop  = $stopwords->clean($contentStem);
+                       
+                    } else if ($language == "indonesian") {
+                        $contentStem = $stemmer->stem(sanitize($row['content']));
+                        $contentStop = $stopword->remove($row['content']);
+                       
+                    }
+                    $arrDoc[] = $contentStop;
+                    $arrIds[] = $row['id'];
+                }
+    
+                $arrDoc[] = $searchStop;
+    
+    
+                $tf = new TokenCountVectorizer(new WhitespaceTokenizer());
+                $tf->fit($arrDoc);
+                $tf->transform($arrDoc);
+    
+                $tfidf = new TfIdfTransformer($arrDoc);
+                $tfidf->transform($arrDoc);
+    
+                $total = count($arrDoc);
+
+                if ($distance_metric == 'Minkowski') {
+                    for ($i = 0; $i < $total - 1; $i++) {
+                        $result = $minkowski->distance($arrDoc[$total - 1], $arrDoc[$i]);
+                        $update = "UPDATE article SET similarity = ? WHERE id = ?";
+                        echo $result;
+                        $stmt = $con->prepare($update);
+                        $stmt->bind_param("di",$result,$arrIds[$i]);
+                        $stmt->execute();
+                    }
+                } else if($distance_metric == 'Cosine') {
+    
+                    for ($i = 0; $i < $total - 1; $i++) {
+                        $result = $minkowski->distance($arrDoc[$i], $arrDoc[$total - 1]);
+                        $update = "UPDATE article SET similarity = ? WHERE id = ?";
+                        echo $result;
+                        $stmt = $con->prepare($update);
+                        $stmt->bind_param("di",$result,$arrIds[$i]);
+                        $stmt->execute();
+                    }
+                }
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
+            }
+        
+           
+
+            unset($_POST);
+
 
 
 
