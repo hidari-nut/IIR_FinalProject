@@ -14,7 +14,7 @@
 <body>
     <?php
 
-    $con = new mysqli("localhost", "root", "", "iirFinal");
+    $con = new mysqli("localhost", "root", "", "iirfinal");
     if ($con->connect_errno) {
         echo "Failed to connect to MySQL:" . $con->connect_error . "<br>";
     } else {
@@ -173,12 +173,14 @@
         }
         else{
             echo "Please enter a keyword";
+            echo "<br>";
         }
         if(isset($_GET['distance_metric'])){
             $metric = $_GET['distance_metric'];
         }
         else{
             echo "Please choose a metric";
+            echo "<br>";
         }
         if(isset($_GET['page'])){
             $page = $_GET['page'];

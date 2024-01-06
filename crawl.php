@@ -3,7 +3,7 @@ include_once('simple_html_dom.php');
 require_once __DIR__ . '/vendor/autoload.php';
 use markfullmer\porter2\Porter2;
 
-$con = new mysqli("localhost", "root", "mysql", "iirFinal");
+$con = new mysqli("localhost", "root", "", "iirfinal");
 if ($con->connect_errno) {
     die("Failed to connect to MySQL: " . $con->connect_errno);
 }
