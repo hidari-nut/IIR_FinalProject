@@ -14,7 +14,7 @@
 <body>
     <?php
 
-    $con = new mysqli("localhost", "root", "mysql", "iirFinal");
+    $con = new mysqli("localhost", "root", "", "iirFinal");
     if ($con->connect_errno) {
         echo "Failed to connect to MySQL:" . $con->connect_error . "<br>";
     } else {
@@ -146,7 +146,7 @@
         ]
     ];
     ?>
-    <form method="POST" action="">
+    <form method="GET" action="">
         <div class="page-type"><a href="index.php">Home</a>|<a href="crawl.php">Crawling</a></div>
         <div class="page-title">Welcome to Scientific Journals Search Engine</div>
         <div class="search-section">
@@ -164,18 +164,31 @@
         <script src="" async defer></script>
         <?php
 
-        if(isset($_POST["distance_metric"])){
-            $metric=$_POST["distance_metric"];
+        $search = "";
+        $metric = "";
+        $page = "1";
+
+        if(isset($_GET['keyword'])){
+            $search = $_GET['keyword'];
         }
-        if(isset($_GET["metric"])){
-            $metric=$_GET["metric"];
+        else{
+            echo "Please enter a keyword";
+        }
+        if(isset($_GET['distance_metric'])){
+            $metric = $_GET['distance_metric'];
+        }
+        else{
+            echo "Please choose a metric";
+        }
+        if(isset($_GET['page'])){
+            $page = $_GET['page'];
+        }
+        else{
+            $page = 1;
         }
 
-        if ((isset($_POST['search_button'])) && (isset($_POST['distance_metric']))) {        
+        if ($page == 1 && $search != "") {        
             try {
-
-                $distance_metric = $_POST['distance_metric'];
-                $search  = $_POST['keyword'];
                 
                 $language = $ld->detectSimple($search);
                 $searchStem = '';
@@ -187,6 +200,12 @@
                 } else if ($language == "indonesian") {
                     $searchStem = $stemmer->stem($search);
                     $searchStop = $stopword->remove($searchStem);
+                }
+                else{
+
+                    // If not English or Indonesian, Default to English
+                    $searchStem = Porter2::stem($search);
+                    $searchStop  = $stopwords->clean($searchStem);
                 }
     
                 $arrDocs = array();
@@ -215,13 +234,16 @@
                 $tf = new TokenCountVectorizer(new WhitespaceTokenizer());
                 $tf->fit($arrDocs);
                 $tf->transform($arrDocs);
+
+                // Get vocabulary/terms from data.
+                $terms = $tf->getVocabulary();
     
                 $tfidf = new TfIdfTransformer($arrDocs);
                 $tfidf->transform($arrDocs);
     
                 $total = count($arrDocs);
 
-                if ($distance_metric == 'Minkowski') {
+                if ($metric == 'Minkowski') {
                     for ($i = 0; $i < $total - 1; $i++) {
                         // $query_terms = count($arrDocs[$total-1]);
                         $minkowski = new Minkowski(2);
@@ -233,7 +255,7 @@
                         $stmt->bind_param("di",$result,$arrIds[$i]);
                         $stmt->execute();
                     }
-                } else if($distance_metric == 'Cosine') {
+                } else if($metric == 'Cosine') {
     
                     for ($i = 0; $i < $total - 1; $i++) {
                         $result = round(Cosine($arrDocs[$i], $arrDocs[$total - 1]),3);
@@ -255,8 +277,88 @@
 
 
 
-        if (isset($metric)) {
+        if ($metric != "") {
+
+            echo "KEYWORD: ".$search;
+
             $order = ($metric == "Minkowski") ? "asc" : "desc";
+
+            $search = "";
+
+            if(isset($_POST['keyword'])){
+                $search  = $_POST['keyword'];
+            }
+            else if(isset($_GET['keyword'])){
+                $search  = $_GET['keyword'];
+            }
+
+            $sql3 = "SELECT concat(title,' ',abstract) as content FROM article 
+            WHERE concat(title,' ',abstract) IS NOT NULL order by similarity $order limit 3";
+            $result3 = $con->query($sql3);
+            $resultsData = array();
+
+            $language = $ld->detectSimple($search);
+
+            while ($row = $result3->fetch_assoc()) {
+
+                $contentStem = '';
+                $contentStop = '';                    
+                if ($language == "english") {
+                    $contentStem = Porter2::stem($row['content']);
+                    $contentStop  = $stopwords->clean($contentStem);
+                   
+                } else if ($language == "indonesian") {
+                    $contentStem = $stemmer->stem($row['content']);
+                    $contentStop = $stopword->remove($contentStem);
+                   
+                }
+                else{
+                    // If not English or Indonesian, Default to English
+                    $contentStem = Porter2::stem($row['content']);
+                    $contentStop  = $stopwords->clean($contentStem);
+                }
+
+                $resultsData[] = $contentStop;
+            }
+
+            // print_r($resultsData);
+
+            // QUERY EXPANSION
+            $tf2 = new TokenCountVectorizer(new WhitespaceTokenizer());
+            $tf2->fit($resultsData);
+            $tf2->transform($resultsData);
+
+            // Get vocabulary/terms from data.
+            $terms = $tf2->getVocabulary();
+
+            // $tfidf = new TfIdfTransformer($arrDocs);
+            // $tfidf->transform($arrDocs);
+
+            // Get the weights of each terms by summing the tf-idf of each Column (means by each term)
+            $termsWeights = array();
+            foreach ($resultsData[0] as $key => $value) {
+                $termsWeights[$key] = array_sum(array_column($resultsData, $key));
+            }
+
+            // Sort the terms to Descending. arsort() supposed to sort it without changing the key.
+            arsort($termsWeights);
+
+            // Get the top 3 weights as an array item from $termsWeights
+            $topTermsWeights = array_slice($termsWeights, 0, 3, true);
+
+            // Get the terms from the $terms array according to the key.
+            $topTerms = array();
+
+            foreach ($topTermsWeights as $key => $value) {
+                $topTerms[$key] = $terms[$key];
+            }
+
+            // echo $topTerms;
+            // print_r($arrDocs);
+            // print_r($termsWeights);
+
+            // echo "<br><br> QUERY EXPANSION TERMS:";
+            // print_r($topTerms);
 
             $sql = "SELECT id FROM article";
             $result = $con->query($sql);
@@ -265,7 +367,7 @@
             $resultsPerPage = 2;
             $totalPages = ceil($totalDataCount / $resultsPerPage);
 
-            $currentpage = isset($_GET['page']) ? $_GET['page'] : 1;
+            $currentpage = $page;
 
             $startIndex = ($currentpage - 1) * $resultsPerPage;
             $endIndex = $startIndex + $resultsPerPage;
@@ -296,28 +398,36 @@
                 echo "</div>";
             }
 
+            // $link = "?keyword=''&distance_metric=''&page=0";
+
             echo "<div class='pagination'>";
-            if ($currentpage > 1) {
-                echo "<a href='?page=" . ($currentpage - 1) . "&metric=$metric'>Previous</a>";
-            }
+
 
             for ($i = 1; $i <= $totalPages; $i++) {
-                echo "<a href='?page=" . $i . "&metric=$metric'" . ($currentpage == $i ? " class='active'" : "") . ">" . $i . "</a>";
+                $page_link = "?keyword=$search&distance_metric=$metric&page=$i";
+                echo "<a href='".$page_link."'" . ($currentpage == $i ? " class='active'" : "") . ">" . $i . "</a>";
             }
 
             if ($currentpage < $totalPages) {
-                echo "<a href='?page=" . ($currentpage + 1) . "&metric=$metric'>Next</a>";
+                $page_link = "?keyword=$search&distance_metric=$metric&page=".($currentpage + 1);
+                echo "<a href='$page_link'>Next</a>";
             }
             echo "</div>";
 
             echo "<div class='related-search'>";
             echo "<h3>Related Search</h3>";
             echo "<ul>";
-            foreach ($sampleLink as $link) {
-                $shortenedId = strlen($link['id']) > 30 ? substr($link['id'], 0, 30) . '...' : $link['id'];
-                //$shortenedId = strlen($link['id']) > 30 ? str_replace(' ', '<br>', wordwrap($link['id'], 30)) : $link['id'];
-                echo "<li><a href='" . $link['link'] . "'>" . $shortenedId . "</a></li>";
+
+            foreach($topTerms as $topTerm){
+                $expansionLink = "?keyword=".$search." ".$topTerm."&distance_metric=$metric&page=1";
+                echo "<li><a href='$expansionLink'>" . $search." ".$topTerm . "</a></li>";
             }
+
+            // foreach ($sampleLink as $link) {
+            //     $shortenedId = strlen($link['id']) > 30 ? substr($link['id'], 0, 30) . '...' : $link['id'];
+            //     //$shortenedId = strlen($link['id']) > 30 ? str_replace(' ', '<br>', wordwrap($link['id'], 30)) : $link['id'];
+            //     echo "<li><a href='" . $link['link'] . "'>" . $shortenedId . "</a></li>";
+            // }
             echo "</ul>";
             echo "</div>";
         }
