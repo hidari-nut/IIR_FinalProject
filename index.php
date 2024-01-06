@@ -420,7 +420,7 @@
 
             foreach($topTerms as $topTerm){
                 $expansionLink = "?keyword=".$search." ".$topTerm."&distance_metric=$metric&page=1";
-                echo "<li><a href='$expansionLink'>" . $search." ".$topTerm . "</a></li>";
+                echo "<li><a href='$expansionLink'>" . $search." <b>".$topTerm . "</b></a></li>";
             }
 
             // foreach ($sampleLink as $link) {
